@@ -17,21 +17,21 @@
 
 ## Sommaire
 
-## [1. Introduction](#introduction)
+1. [Introduction](#introduction)
 
-## [2. Jeu de données MNIST](#jeu-de-données-mnist)
+2. [Jeu de données MNIST](#jeu-de-données-mnist)
 
-## [3. Architecture et méthodologie](#architecture-du-modèle-et-méthodologie-expérimentale)
+3. [Architecture et méthodologie](#architecture-du-modèle-et-méthodologie-expérimentale)
 
-## [4. Distribution des données](#distribution-des-données-entre-clients)
+4. [Distribution des données](#distribution-des-données-entre-clients)
 
-## [5. Algorithmes d'agrégation](#algorithmes-dagrégation)
+5. [Algorithmes d'agrégation](#algorithmes-dagrégation)
 
-## [6. Expérimentations et paramètres](#paramètres-étudiés-et-expérimentations)
+6. [Expérimentations et paramètres](#paramètres-étudiés-et-expérimentations)
 
-## [7. Résultats et analyse](#résultats-et-analyse)
+7. [Résultats et analyse](#résultats-et-analyse)
 
-## [8. Conclusion et perspectives](#conclusion-et-perspectives)
+8. [Conclusion et perspectives](#conclusion-et-perspectives)
 
 <div class="page"/>
 
