@@ -35,3 +35,9 @@ body {
     margin: 0.5cm auto;
     border-bottom: 2px solid #3498db;
 }
+
+pre, code {
+    text-align: left;
+    word-break: break-word;
+    font-size: small;
+}

@@ -1,77 +1,45 @@
-# Rapport sur l'Apprentissage Fédéré : Sécurité, Confidentialité et Perspectives d'Avenir
+
+<div class="title">Apprentissage Fédéré</div>
+<div class="separator"></div>
+<div class="subtitle">Sécurité, Confidentialité et Perspectives d'Avenir</div>
+
+<div class="authors">
+<p>Clément COLIN</p>
+<p>Enzo ROCAMORA</p>
+<p>Thomas CHOUBRAC</p>
+</div>
+
+<div class="authors">
+<p>Avril 2025<p>
+</div>
+
+<div class="page"/>
 
 ## Sommaire
 
-1. **Introduction à l'Apprentissage Fédéré et ses Enjeux de Sécurité**
-   - Principes fondamentaux de l'Apprentissage Fédéré
-   - Contexte réglementaire et sociétal
-   - Défis spécifiques de sécurité et de confidentialité
+1. [Introduction à l'Apprentissage Fédéré et ses Enjeux de Sécurité](#1-introduction-à-lapprentissage-fédéré-et-ses-enjeux-de-sécurité)
 
-2. **Paysage des Vulnérabilités et Menaces**
-   - Modèles d'attaque et classification des menaces
-   - Vulnérabilités dans les architectures fédérées
-   - Protocoles de communication et vulnérabilités associées
-   - Analyse de sécurité des frameworks existants
+2. [Paysage des Vulnérabilités et Menaces](#2-paysage-des-vulnérabilités-et-menaces)
 
-3. **Analyse Approfondie des Menaces de Sécurité**
-   - Attaques contre l'intégrité du modèle
-     * Empoisonnement des données et des modèles
-     * Attaques par porte dérobée
-   - Attaques contre la confidentialité des données
-     * Attaques par inférence et reconstruction
-   - Attaques contre la disponibilité
+3. [Analyse Approfondie des Menaces de Sécurité](#3-analyse-approfondie-des-menaces-de-sécurité)
 
-4. **Mécanismes de Défense et Techniques de Protection**
-   - Défenses contre les attaques d'intégrité
-     * Mécanismes d'agrégation robuste
-     * Détection d'anomalies et filtrage
-   - Protections de la confidentialité
-     * Confidentialité différentielle
-     * Techniques cryptographiques
-   - Compromis fondamentaux
+4. [Mécanismes de Défense et Techniques de Protection](#4-mécanismes-de-défense-et-techniques-de-protection)
 
-5. **Perspectives de Recherche et Innovations**
-   - Architectures de sécurité avancées
-     * Architectures multi-niveaux sécurisées
-     * Sécurité adaptative contextuelle
-   - Techniques de détection et réponse avancées
-     * Détection basée sur l'intelligence artificielle
-     * Réponse automatisée aux incidents
-   - Apprentissage fédéré à confidentialité préservée par construction
+5. [Perspectives de Recherche et Innovations](#5-perspectives-de-recherche-et-innovations)
 
-6. **Études de Cas: Sécurité dans les Déploiements**
-   - Sécurité dans les systèmes de santé fédérés
-     * Le consortium MELLODDY
-     * EXAM: Confidentialité des données médicales
-   - Protection des données financières
-     * Détection de fraude inter-bancaire
+6. [Études de Cas: Sécurité dans les Déploiements](#6-études-de-cas-sécurité-dans-les-déploiements)
 
-7. **Implications Réglementaires et Éthiques**
-   - Cadres réglementaires et conformité
-     * Conformité aux réglementations de protection des données
-     * Certification et standards émergents
-   - Considérations éthiques et sociétales
-     * Équité algorithmique et fracture numérique
-   - Gouvernance et responsabilité partagée
+7. [Implications Réglementaires et Éthiques](#7-implications-réglementaires-et-éthiques)
 
-8. **Défis Opérationnels et Mise en Œuvre**
-   - Gestion des ressources et performance
-     * Optimisation des coûts computationnels
-     * Scalabilité des systèmes sécurisés
-   - Déploiement et maintenance
-     * Gestion des mises à jour de sécurité
-     * Réponse aux incidents
+8. [Défis Opérationnels et Mise en Œuvre](#8-implémentation-pratique-des-mécanismes-de-sécurité)
 
-9. **Perspectives d'Avenir à Court et Moyen Terme**
-   - Évolutions technologiques imminentes
-   - Tendances d'adoption et standardisation
-   - Ressources pour les implémentations sécurisées
+9. [Perspectives d'Avenir à Court et Moyen Terme](#9-perspectives-davenir-à-court-et-moyen-terme)
 
-10. **Conclusion**
-    - Équilibre des forces et faiblesses
-    - Perspectives d'évolution sécuritaire
+10. [Conclusion](#10-conclusion-vers-un-apprentissage-fédéré-sécurisé)
 
-11. **Références**
+11. [Références](#11-références)
+
+<div class="page"/>
 
 ## 1. Introduction à l'Apprentissage Fédéré et ses Enjeux de Sécurité
 
@@ -127,6 +95,8 @@ Cette diversité d'approches souligne l'absence actuelle de standards de sécuri
 
 L'Apprentissage Fédéré introduit des vulnérabilités spécifiques qui peuvent être exploitées par des adversaires sophistiqués. Ces menaces peuvent être classifiées selon leur cible principale: l'intégrité du modèle, la confidentialité des données, ou la disponibilité du système.
 
+<div class="page"/>
+
 ### Attaques contre l'Intégrité du Modèle
 
 #### Empoisonnement des Données et des Modèles
@@ -150,6 +120,8 @@ Malgré l'absence de partage direct des données brutes, les mises à jour des m
 Les attaques par inférence de membres visent à déterminer si un échantillon spécifique a fait partie des données d'entraînement d'un participant. Ces attaques exploitent le fait que les modèles réagissent différemment aux exemples sur lesquels ils ont été entraînés, créant une signature statistique détectable.
 
 Plus préoccupantes encore, les attaques par reconstruction tentent de recréer partiellement ou complètement les données d'entraînement originales à partir des gradients partagés. Dans certains cas, particulièrement avec des modèles surparamétrés, ces techniques peuvent reconstruire avec une précision surprenante les exemples d'entraînement.
+
+<div class="page"/>
 
 ### Attaques contre la Disponibilité
 
@@ -177,6 +149,8 @@ Les méthodes basées sur les normes utilisent des statistiques simples comme la
 
 La validation croisée fédérée consiste à évaluer l'impact des mises à jour proposées sur un ensemble de validation, permettant d'identifier efficacement les contributions qui dégradent les performances globales.
 
+<div class="page"/>
+
 ### Protections de la Confidentialité
 
 #### Confidentialité Différentielle
@@ -198,6 +172,8 @@ Les mécanismes de défense illustrent le trilemme fondamental de l'Apprentissag
 La confidentialité différentielle dégrade intentionnellement la qualité des mises à jour pour garantir la protection des données individuelles. Les approches cryptographiques préservent la précision du modèle mais imposent une surcharge computationnelle considérable. Les mécanismes d'agrégation robuste, en filtrant certaines contributions, risquent d'écarter des informations légitimes mais atypiques.
 
 Ces compromis incontournables soulignent l'importance d'une approche contextuelle de la sécurité dans l'Apprentissage Fédéré, où les mécanismes de protection sont sélectionnés et calibrés en fonction des menaces spécifiques et des exigences de chaque application.
+
+<div class="page"/>
 
 ## 5. Perspectives de Recherche et Innovations
 
@@ -225,6 +201,8 @@ L'application de techniques avancées d'intelligence artificielle pour la détec
 
 Les réseaux adverses génératifs (GANs) peuvent être adaptés pour créer des "détecteurs d'anomalies" spécialisés dans l'identification des mises à jour suspectes. Les techniques d'apprentissage par renforcement permettraient de développer des agents de détection qui s'améliorent continuellement au fur et à mesure de leur exposition à de nouvelles variantes d'attaques.
 
+<div class="page"/>
+
 #### Réponse Automatisée aux Incidents
 
 Au-delà de la simple détection, le développement de mécanismes automatisés de réponse aux incidents de sécurité constitue une direction essentielle. Ces systèmes viseraient à maintenir l'intégrité du processus d'apprentissage même en présence d'attaques actives.
@@ -251,6 +229,8 @@ L'examen des déploiements concrets d'Apprentissage Fédéré révèle comment l
 
 Le projet MELLODDY (Machine Learning Ledger Orchestration for Drug Discovery) représente un cas d'étude remarquable d'Apprentissage Fédéré dans un contexte hautement compétitif. Ce consortium réunit dix grandes entreprises pharmaceutiques européennes pour développer collaborativement des modèles prédictifs pour la découverte de médicaments sans compromettre leurs secrets industriels.
 
+<div class="page"/>
+
 L'architecture de sécurité repose sur plusieurs couches de protection: chiffrement homomorphe pour les opérations d'agrégation, calcul multi-parties sécurisé pour certaines phases critiques, et confidentialité différentielle calibrée spécifiquement pour les données chimiques. Pour prévenir les attaques par empoisonnement, chaque contribution est validée par un comité technique indépendant sans accéder aux données sous-jacentes.
 
 Les leçons clés soulignent l'importance d'une conception de sécurité adaptée au contexte spécifique et aux motivations des adversaires potentiels – dans ce cas, des concurrents industriels avec des intérêts économiques substantiels.
@@ -270,6 +250,8 @@ Un consortium de banques européennes a déployé une solution d'Apprentissage F
 L'architecture repose sur un modèle de confiance graduée avec différents niveaux d'accès et de privilèges. Pour contrer les attaques par inférence ciblant des informations commercialement sensibles, le système combine confidentialité différentielle et partitionnement sécurisé. Face au risque d'empoisonnement stratégique, il emploie une agrégation robuste multi-niveau.
 
 Les leçons tirées soulignent l'importance d'aligner les mécanismes de sécurité avec les modèles d'incitation économique des participants, qui partagent ici un intérêt fondamental à maintenir l'intégrité du système malgré leur position concurrentielle.
+
+<div class="page"/>
 
 ## 7. Implications Réglementaires et Éthiques
 
@@ -313,13 +295,14 @@ La transparence des mécanismes de sécurité constitue un principe fondamental 
 
 La mise en œuvre des concepts de sécurité dans l'Apprentissage Fédéré nécessite des modifications spécifiques au code. Cette section présente des techniques pratiques pour renforcer la sécurité du système fédéré existant, sans nécessiter de refonte complète de l'architecture.
 
+<div class="page"/>
+
 ### 8.1 Ajout de Confidentialité Différentielle
 
 L'implémentation de la confidentialité différentielle dans `aggregation.py` peut protéger efficacement contre les attaques par inférence.
 
 ```python
-# À ajouter dans aggregation.py
-def add_differential_privacy(client_updates, noise_scale=0.01, clip_norm=1.0):
+def add_diff_privacy(client_updates, noise_scale=0.01, clip_norm=1.0):
     """Ajoute de la confidentialité différentielle aux mises à jour des clients."""
     clipped_updates = []
     
@@ -349,7 +332,6 @@ def add_differential_privacy(client_updates, noise_scale=0.01, clip_norm=1.0):
 Pour utiliser cette fonction, il faudrait modifier les algorithmes d'agrégation existants pour incorporer cette étape, par exemple dans `fedavg`:
 
 ```python
-# Modification dans fedavg
 def fedavg(scaled_weight_list, central_weights=None, config_name=None, round_num=None, dp_params=None):
     # Appliquer la confidentialité différentielle si demandé
     if dp_params is not None:
@@ -367,9 +349,8 @@ def fedavg(scaled_weight_list, central_weights=None, config_name=None, round_num
 Une fonction de détection d'anomalies dans les mises à jour des clients peut être ajoutée dans `fl_types.py` pour identifier et filtrer les contributions potentiellement malveillantes:
 
 ```python
-# À ajouter dans fl_types.py
 def detect_anomalous_updates(client_updates, method='norm', threshold=2.0):
-    """Détecte les mises à jour anormales qui pourraient indiquer une attaque."""
+    """Détecte les mises à jour anormales."""
     if method == 'norm':
         # Calculer la norme L2 de chaque mise à jour
         norms = []
@@ -393,21 +374,15 @@ def detect_anomalous_updates(client_updates, method='norm', threshold=2.0):
 Cette fonction pourrait être intégrée dans le processus d'apprentissage fédéré:
 
 ```python
-# Modification dans horizontal_federated_learning (fl_types.py)
 def horizontal_federated_learning(edges, central_model, input_shape, num_classes, 
                                  edge_epochs, test_data, aggregation_fn, 
                                  anomaly_detection=False, verbose=0):
     # Code existant...
-    
-    # Après avoir collecté toutes les mises à jour
     if anomaly_detection:
         anomalies = detect_anomalous_updates(scaled_local_weight_list)
         
         # Filtrer les mises à jour anormales
         filtered_weight_list = [w for i, w in enumerate(scaled_local_weight_list) if not anomalies[i]]
-        
-        if verbose > 0:
-            print(f"Détection d'anomalies: {sum(anomalies)} client(s) filtré(s)")
         
         # Utiliser la liste filtrée
         updated_weights = aggregation_fn(filtered_weight_list)
@@ -422,7 +397,6 @@ def horizontal_federated_learning(edges, central_model, input_shape, num_classes
 Un mécanisme simple de vérification d'intégrité peut être implémenté pour s'assurer que les mises à jour des modèles n'ont pas été altérées. Cela pourrait être ajouté à `fl_model.py`:
 
 ```python
-# À ajouter dans fl_model.py
 import hashlib
 
 def compute_model_hash(model_weights):
@@ -435,16 +409,19 @@ def compute_model_hash(model_weights):
     # Calculer le hash SHA-256
     return hashlib.sha256(combined).hexdigest()
 
-# Ajouter à la classe MyModel
 def verify_integrity(self, original_hash):
     """Vérifie que le modèle n'a pas été altéré."""
     current_hash = compute_model_hash(self.get_weights())
     return current_hash == original_hash
 ```
 
+<div class="page"/>
+
 ### 8.4 Schéma des Mécanismes de Sécurité Proposés
 
 ![schema expliquant les solutions](Mediamodifier-Design-Template-1.png)
+
+<div class="page"/>
 
 ### 8.5 Avantages et Limites
 
@@ -473,9 +450,7 @@ Ces approches comportent également certaines limitations:
 Pour intégrer ces mécanismes dans le pipeline existant, il faudrait modifier le fichier `run_all.py` pour permettre la configuration des paramètres de sécurité:
 
 ```python
-# Modification dans run_all.py - ajouter ces paramètres à la configuration
 configurations = [
-    # Configuration existante + paramètres de sécurité
     {'name': 'FedAvg_Secure', 'num_clients': 10, 'distribution': 'iid', 
      'algo': 'fedavg', 'epochs': 3, 'rounds': 5,
      'security': {
@@ -484,7 +459,6 @@ configurations = [
          'integrity_verification': {'enabled': True}
      }
     },
-    # Autres configurations...
 ]
 ```
 
@@ -516,6 +490,8 @@ Pour les organisations souhaitant déployer des systèmes d'Apprentissage Fédé
 - **Méthodologies d'évaluation**: Des outils comme "FL-Security-Bench" permettent d'évaluer systématiquement la résistance des systèmes fédérés contre diverses classes d'attaques
 - **Communautés de pratique**: Des groupes comme "OpenFL Security Working Group" et "PPML Alliance" facilitent le partage de bonnes pratiques et de patterns d'implémentation sécurisés
 
+<div class="page"/>
+
 ## 10. Conclusion: Vers un Apprentissage Fédéré Sécurisé
 
 Au terme de cette analyse approfondie des aspects sécuritaires et de confidentialité de l'Apprentissage Fédéré, plusieurs constats fondamentaux émergent qui définissent les enjeux présents et futurs de cette technologie prometteuse.
@@ -537,6 +513,8 @@ L'intégration de couches de protection complémentaires – combiner par exempl
 Les études de cas présentées démontrent que des implémentations pratiques peuvent effectivement atteindre un équilibre viable entre protection et utilité, à condition d'être soigneusement calibrées pour leur contexte spécifique.
 
 En définitive, l'Apprentissage Fédéré représente une évolution significative plutôt qu'une révolution absolue dans la réconciliation entre les bénéfices de l'intelligence artificielle collaborative et les impératifs de protection des données. Sa valeur réside précisément dans sa capacité à élargir l'espace des compromis viables, permettant dans de nombreux contextes de déplacer favorablement l'équilibre entre utilité et protection. Le chemin vers sa maturité impliquera une vigilance constante face aux vulnérabilités émergentes et une innovation continue dans les mécanismes de protection.
+
+<div class="page"/>
 
 ## 11. Références
 
