@@ -4,37 +4,34 @@
 <div class="subtitle">Implémentation et analyse sur le jeu de données MNIST</div>
 
 <div class="authors">
-<p><strong>Par</strong></p>
 <p>Clément COLIN</p>
 <p>Enzo ROCAMORA</p>
 <p>Thomas CHOUBRAC</p>
 </div>
 
+<div class="authors">
 <p>Avril 2025<p>
+</div>
 
 <div class="page"/>
 
 ## Sommaire
 
-## [1. Introduction](#1-introduction)
+## [1. Introduction](#introduction)
 
-## [2. Jeu de données MNIST](#2-jeu-de-données-mnist)
+## [2. Jeu de données MNIST](#jeu-de-données-mnist)
 
-## [3. Architecture et méthodologie](#3-architecture-et-méthodologie)
+## [3. Architecture et méthodologie](#architecture-du-modèle-et-méthodologie-expérimentale)
 
-## [4. Distribution des données](#4-distribution-des-données)
+## [4. Distribution des données](#distribution-des-données-entre-clients)
 
-## [5. Algorithmes d'agrégation](#5-algorithmes-dagrégation)
+## [5. Algorithmes d'agrégation](#algorithmes-dagrégation)
 
-## [6. Expérimentations et paramètres](#6-expérimentations-et-paramètres)
+## [6. Expérimentations et paramètres](#paramètres-étudiés-et-expérimentations)
 
-## [7. Résultats et analyse](#7-résultats-et-analyse)
+## [7. Résultats et analyse](#résultats-et-analyse)
 
-## [8. Sécurité et confidentialité dans l'apprentissage fédéré](#8-sécurité-et-confidentialité-dans-lapprentissage-fédéré)
-
-## [9. Conclusion et perspectives](#9-conclusion-et-perspectives)
-
-## [10. Références bibliographiques](#10-références-bibliographiques)
+## [8. Conclusion et perspectives](#conclusion-et-perspectives)
 
 <div class="page"/>
 
@@ -135,6 +132,9 @@ Notre projet est organisé en plusieurs modules Python :
 - `data_partition.py` : Fonctions pour la répartition des données entre clients
 - `aggregation.py` : Algorithmes d'agrégation (FedAvg, FedSGD, FedProx)
 - `utils.py` : Fonctions utilitaires
+- `communication_utils.py` : Utilitaires pour suivre les communications dans l'apprentissage fédéré
+- `fairness_utils.py` : Utilitaires pour analyser l'équité entre clients et calculer les matrices de confusion
+- `outlier_analysis.py` : Expériences et visualisations pour l'impact des outliers et du bruit
 - `run_all.py` : Script principal pour exécuter toutes les expériences
 
 ### Exécution des expériences
@@ -154,6 +154,24 @@ Ce script va :
 
 L'exécution complète peut prendre plusieurs heures selon votre matériel, car de nombreuses configurations sont testées (nombre de clients, de rounds, d'époques locales, différents algorithmes, etc.).
 
+Vous pouvez donc sélectionner les configurations à exécuter en commentant ou décommentant les lignes correspondantes dans la liste des configurations du script ligne 75 dans `run_all.py`.
+
+Par exemple:
+
+```py
+configurations = [
+    # Nombre de rounds fédérés
+    {'name': 'Rounds_3', 'num_clients': 10, 'distribution': 'iid', 'algo': 'fedavg', 'epochs': 3, 'rounds': 3},
+    {'name': 'Rounds_5', 'num_clients': 10, 'distribution': 'iid', 'algo': 'fedavg', 'epochs': 3, 'rounds': 5},
+    # {'name': 'Rounds_10', 'num_clients': 10, 'distribution': 'iid', 'algo': 'fedavg', 'epochs': 3, 'rounds': 10},  # Configuration désactivée
+    
+    # Nombre de clients
+    {'name': 'Clients_5', 'num_clients': 5, 'distribution': 'iid', 'algo': 'fedavg', 'epochs': 3, 'rounds': 5},
+    {'name': 'Clients_10', 'num_clients': 10, 'distribution': 'iid', 'algo': 'fedavg', 'epochs': 3, 'rounds': 5},
+    {'name': 'Clients_20', 'num_clients': 20, 'distribution': 'iid', 'algo': 'fedavg', 'epochs': 3, 'rounds': 5},
+]
+```
+
 <div class="page"/>
 
 ### Fichiers générés
@@ -170,6 +188,31 @@ L'exécution complète peut prendre plusieurs heures selon votre matériel, car 
 
 4. **Historique des paramètres** :
    - Dossier `parameter_history/` : Fichiers pickle contenant l'historique des paramètres pour chaque configuration
+
+### Architecture générale
+
+L'architecture générale de notre système d'apprentissage fédéré repose sur trois composants principaux :
+
+1. **Serveur central** : Coordonne le processus d'apprentissage, agrège les mises à jour des modèles clients
+2. **Clients (edges)** : Entraînent des modèles locaux sur leurs données privées
+3. **Modèle global** : Résultat de l'agrégation des modèles locaux
+
+Le flux de données et d'informations est unidirectionnel pour les données (qui restent sur les appareils clients) et bidirectionnel pour les paramètres du modèle.
+
+### Cycle d'apprentissage fédéré
+
+Chaque round d'apprentissage fédéré suit les étapes suivantes :
+
+1. Le serveur central initialise les poids du modèle global ou utilise les poids de la dernière itération
+2. Le serveur distribue ces poids à tous les clients participants
+3. Chaque client entraîne le modèle sur ses données locales pendant un nombre prédéfini d'époques
+4. Chaque client calcule la mise à jour de ses poids (différence entre poids initiaux et poids après entraînement)
+5. Les clients envoient leurs mises à jour (ou leurs poids complets) au serveur
+6. Le serveur agrège ces mises à jour selon l'algorithme choisi (FedAvg, FedSGD, FedProx)
+7. Le serveur met à jour le modèle global avec les poids agrégés
+8. Le processus se répète à partir de l'étape 2 pour le round suivant
+
+![Diagramme de Sequence](./federated_learning_sequence_diagram.png)
 
 ### Modèle neuronal
 
@@ -329,6 +372,21 @@ Nous avons implémenté et comparé trois algorithmes d'agrégation principaux :
 
 1. **FedAvg** (Federated Averaging) : l'algorithme standard qui calcule une moyenne pondérée des poids des modèles locaux.
 
+**Formule mathématique** : 
+$$w_{t+1} = \sum_{k=1}^{K} \frac{n_k}{n} w_k^{t+1}$$
+
+où:
+- $w_{t+1}$ représente les poids globaux à l'iteration $t+1$
+- $w_k^{t+1}$ représente les poids du client $k$ après entraînement local
+- $n_k$ est le nombre d'exemples du client $k$
+- $n$ est le nombre total d'exemples
+
+**Caractéristiques** :
+- Simple et efficace
+- Convergence relativement rapide
+- Relativement robuste aux outliers (comme montré dans nos expériences)
+- Sensible à l'hétérogénéité des données (distribution non-IID)
+
 ```python
 def fedavg(scaled_weight_list, central_weights=None, config_name=None, round_num=None): 
     avg_weights = list()
@@ -340,6 +398,19 @@ def fedavg(scaled_weight_list, central_weights=None, config_name=None, round_num
 ```
 
 2. **FedSGD** (Federated Stochastic Gradient Descent) : agrégation basée sur les gradients plutôt que sur les poids eux-mêmes.
+
+**Formule mathématique** :
+$$w_{t+1} = w_t - \eta \sum_{k=1}^{K} \frac{n_k}{n} \nabla F_k(w_t)$$
+
+où:
+- $\nabla F_k(w_t)$ est le gradient de la fonction objectif du client $k$
+- $\eta$ est le taux d'apprentissage
+
+**Caractéristiques** :
+- Nécessite moins de communication que FedAvg (uniquement les gradients)
+- Convergence généralement plus lente
+- Sensible au choix du taux d'apprentissage
+- Moins robuste aux outliers que FedAvg
 
 ```python
 def fedsgd(model, client_grads, learning_rate=0.01, central_weights=None, config_name=None, round_num=None):
@@ -353,6 +424,19 @@ def fedsgd(model, client_grads, learning_rate=0.01, central_weights=None, config
 
 3. **FedProx** (Federated Proximal) : une extension de FedAvg qui ajoute un terme de régularisation proximal pour limiter la divergence entre les modèles.
 
+**Formule mathématique** :
+$$F_k(w) = L_k(w) + \frac{\mu}{2} ||w - w_t||^2$$
+
+où:
+- $L_k(w)$ est la fonction de perte originale du client $k$
+- $\mu$ est le paramètre de régularisation proximal
+- $w_t$ est le modèle global à l'itération $t$
+
+**Caractéristiques** :
+- Plus stable que FedAvg en présence de données hétérogènes
+- Convergence plus uniforme entre les clients
+- Paramètre $\mu$ à ajuster selon le degré d'hétérogénéité
+
 ```python
 def fedprox(scaled_weight_list, global_weights, mu=0.01, config_name=None, round_num=None):
     avg_weights = []
@@ -362,7 +446,6 @@ def fedprox(scaled_weight_list, global_weights, mu=0.01, config_name=None, round
     for i in range(len(avg_weights)):
         proximal_term = mu * (avg_weights[i] - global_weights[i])
         avg_weights[i] = avg_weights[i] - proximal_term
-    
     return avg_weights
 ```
 
@@ -407,6 +490,8 @@ def run_all_experiments():
             # ... [enregistrement des résultats] ...
 ```
 
+<div class="page"/>
+
 ## Résultats et analyse
 
 ### Comparaison avec l'entraînement centralisé
@@ -429,6 +514,8 @@ Nos expériences montrent que la précision augmente avec le nombre de rounds, m
 
 La convergence suit une courbe typique d'apprentissage : rapide au début, puis qui ralentit progressivement. Cette observation est importante pour optimiser les ressources dans un déploiement réel.
 
+<div class="page"/>
+
 ### Impact du nombre de clients
 
 Nous avons observé une relation inverse entre le nombre de clients et la précision du modèle final. Avec 5 clients, la précision atteint 92%, tandis qu'avec 10 et 20 clients, elle baisse respectivement à 90% et 87%.
@@ -437,12 +524,12 @@ Nous avons observé une relation inverse entre le nombre de clients et la préci
     <img src="./plots/clients_vs_time.png" width="500" />
 </div>
 
-<div class="page"/>
-
 Cette dégradation peut s'expliquer par plusieurs facteurs :
 1. Moins de données par client, limitant la capacité d'apprentissage individuelle
 2. Plus grande diversité de mises à jour, créant potentiellement des interférences lors de l'agrégation
 3. Augmentation quasi-linéaire du temps de calcul (125s pour 5 clients, 213s pour 10 clients, 408s pour 20 clients)
+
+<div class="page"/>
 
 ### Influence de la distribution des données
 
@@ -492,12 +579,90 @@ FedAvg et FedProx convergent vers des régions similaires de l'espace des param�
 
 <div class="page"/>
 
+### Impact du ratio d'outliers
+
+Nos expériences montrent que la performance du modèle se dégrade avec l'augmentation du pourcentage de clients outliers, mais cette dégradation reste relativement contenue :
+
+| Configuration | Loss | Accuracy | Temps d'exécution |
+|---------------|------|----------|-------------------|
+| Centralized   | 0.1725 | 0.9474 | 31.17s |
+| Outliers_10pct | 0.3458 | 0.9007 | 191.66s |
+| Outliers_20pct | 0.3401 | 0.9024 | 197.74s |
+| Outliers_30pct | 0.3430 | 0.9005 | 204.87s |
+
+Fait intéressant, la précision semble se stabiliser autour de 90% même lorsque le pourcentage d'outliers augmente jusqu'à 30%. Cela suggère une certaine robustesse intrinsèque de l'algorithme FedAvg face aux clients aberrants.
+
+#### Impact du niveau de bruit
+
+L'intensité du bruit ajouté aux données des clients outliers a également un impact sur les performances du modèle :
+
+- Avec un bruit faible (0.1), l'impact sur la précision finale est minimal
+- Avec un bruit moyen (0.3), on observe une dégradation modérée
+- Avec un bruit élevé (0.5), la dégradation devient plus significative
+
+Cependant, même avec un niveau de bruit élevé (0.5) et 30% de clients outliers, le modèle parvient à atteindre une précision de 89.74%, ce qui reste proche des 90% observés dans les scénarios avec moins de bruit.
+
+#### Convergence en présence d'outliers
+
+L'analyse de la convergence montre que la présence d'outliers affecte principalement les premiers rounds d'apprentissage :
+
+- Round 1 : écart important entre les configurations avec et sans outliers
+- Rounds suivants : l'écart se réduit progressivement
+- Round final : la différence de précision entre la configuration sans outlier et celle avec 30% d'outliers n'est que de 4-5%
+
+Cette observation suggère que l'algorithme FedAvg parvient à "absorber" l'impact des outliers au fur et à mesure des rounds d'agrégation, ce qui explique la robustesse relative du système.
+
+<div class="page"/>
+
 ## Conclusion et perspectives
 
-Notre étude a permis d'identifier plusieurs facteurs clés influençant l'efficacité de l'apprentissage fédéré. Si cette approche n'atteint pas les performances d'un modèle centralisé ayant accès à toutes les données, elle offre néanmoins un compromis intéressant entre confidentialité et précision.
+Notre étude a permis d'explorer en profondeur l'apprentissage fédéré sur le jeu de données MNIST, en analysant l'impact de nombreux paramètres sur les performances du système. Nous avons constaté que, bien que l'approche fédérée n'atteigne pas tout à fait les performances d'un modèle centralisé (95% contre 92% dans le meilleur des cas), elle offre un compromis très intéressant entre préservation de la confidentialité des données et efficacité prédictive.
 
-Les défis majeurs concernent la gestion de l'hétérogénéité des données entre clients et l'équilibre optimal entre le nombre de rounds globaux et d'époques locales. L'algorithme d'agrégation joue également un rôle crucial, avec FedProx démontrant une légère supériorité sur FedAvg dans nos tests.
+L'hétérogénéité des données entre clients (distribution non-IID) s'est révélée être le facteur le plus critique, faisant chuter la précision de 90% à 48,2%. Cette observation souligne l'importance de développer des algorithmes robustes face à des distributions de données déséquilibrées, un scénario fréquent dans les applications réelles. Paradoxalement, nous avons observé qu'une spécialisation extrême des clients (non-IID extrême) peut partiellement atténuer ce problème, permettant une remontée à 62% de précision.
 
-Ces observations fournissent des pistes pour l'optimisation des systèmes d'apprentissage fédéré dans des applications réelles, où les contraintes de ressources, de confidentialité et de performance doivent être équilibrées. Notre étude démontre qu'avec une configuration appropriée, l'apprentissage fédéré peut atteindre des performances compétitives tout en préservant la confidentialité des données.
+Le nombre de clients a également un impact significatif, avec une relation inverse entre leur nombre et la précision finale. Cette dégradation peut s'expliquer par la diminution du volume de données par client et l'augmentation de la diversité des mises à jour, créant potentiellement des interférences lors de l'agrégation. Cette observation est particulièrement pertinente pour les déploiements à grande échelle, où un équilibre doit être trouvé entre inclusion d'un maximum de participants et maintien de performances acceptables.
 
-Pour des développements futurs, il serait intéressant d'explorer des méthodes plus robustes pour gérer les données non-IID, des techniques de communication plus efficaces pour réduire la bande passante requise, ainsi que des approches de personnalisation adaptant le modèle global aux spécificités locales sans compromettre la performance globale.
+Concernant les algorithmes d'agrégation, nos expériences ont montré la supériorité de FedProx et FedAvg (90% de précision) par rapport à FedSGD (seulement 10,8%). Le terme de régularisation proximal de FedProx semble aider à stabiliser l'apprentissage, particulièrement important dans les scénarios avec données hétérogènes. Les trajectoires d'apprentissage visualisées confirment que FedAvg et FedProx convergent vers des régions similaires de l'espace des paramètres, tandis que FedSGD stagne.
+
+Nos expériences sur les outliers ont révélé une robustesse inattendue de l'algorithme FedAvg. Même avec 30% de clients outliers et un niveau de bruit élevé, le modèle maintient une précision proche de 90%, montrant que le système parvient à "absorber" progressivement l'impact des données aberrantes au fil des rounds d'agrégation.
+
+L'équilibre entre rounds globaux et époques locales s'avère également crucial. Nous avons observé qu'au-delà de 5 rounds, le gain de performance devient marginal, tandis que l'augmentation des époques locales (de 1 à 5) améliore la précision de façon significative (de 85,7% à 92,2%), au prix d'un temps de calcul accru.
+
+Ces résultats fournissent des indications précieuses pour l'optimisation des systèmes d'apprentissage fédéré dans des applications réelles, où les contraintes de ressources, de confidentialité et de performance doivent être soigneusement équilibrées.
+
+<div class="page"/>
+
+## Perspectives d'enrichissement
+
+À la lumière de nos résultats, plusieurs axes de recherche prometteurs se dégagent pour approfondir notre compréhension et améliorer l'efficacité de l'apprentissage fédéré.
+
+### Adaptation aux données hétérogènes
+
+La chute drastique de performance observée dans les scénarios non-IID (48,2%) appelle à développer des méthodes spécifiquement conçues pour gérer l'hétérogénéité des données. Les pistes à explorer incluent :
+
+- L'implémentation d'algorithmes de régularisation adaptatifs, ajustant la contrainte proximale (μ dans FedProx) en fonction du degré d'hétérogénéité détecté pour chaque client
+- L'exploration de techniques de transfert de connaissances entre clients, permettant aux clients spécialisés dans certaines classes de partager leur expertise
+- Le développement de mécanismes d'augmentation de données locales pour équilibrer artificiellement la distribution des classes chez chaque client
+
+### Optimisation des communications
+
+Nos expériences ont révélé que le temps de calcul augmente presque linéairement avec le nombre de clients (125s pour 5 clients, 408s pour 20 clients). Pour des déploiements à grande échelle, il serait crucial d'explorer :
+
+- Des stratégies de compression de modèles pour réduire la taille des mises à jour transmises
+- Des mécanismes de sélection de clients permettant de n'impliquer qu'un sous-ensemble de participants à chaque round
+- Des protocoles de communication asynchrones autorisant les clients à soumettre leurs mises à jour à leur propre rythme
+
+### Robustesse et sécurité
+
+La relative robustesse de FedAvg face aux outliers mérite d'être approfondie, notamment en :
+
+- Testant des scénarios d'attaques adversaires plus sophistiqués (manipulation ciblée des gradients)
+- Évaluant l'impact de clients malveillants cherchant délibérément à dégrader le modèle global
+- Développant des mécanismes de détection et d'atténuation des contributions aberrantes
+
+### Extension à d'autres types de données et modèles
+
+Notre étude s'est concentrée sur MNIST, un jeu de données relativement simple. L'extension à des tâches plus complexes permettrait d'évaluer :
+
+- L'application de l'apprentissage fédéré à des architectures plus sophistiquées (CNN, Transformers)
+- La généralisation à d'autres types de données (texte ou données tabulaires complexes)

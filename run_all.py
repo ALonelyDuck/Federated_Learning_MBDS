@@ -3,6 +3,9 @@ import fl_model
 import data_partition
 import aggregation
 import fl_types
+import communication_utils
+import fairness_utils
+import outlier_analysis
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -97,6 +100,11 @@ def run_all_experiments():
         {'name': 'FedSGD_LR0.1', 'num_clients': 10, 'distribution': 'iid', 'algo': 'fedsgd', 'epochs': 3, 'rounds': 5, 'lr': 0.1},
         {'name': 'FedProx_mu0.01', 'num_clients': 10, 'distribution': 'iid', 'algo': 'fedprox', 'epochs': 3, 'rounds': 5, 'mu': 0.01},
         {'name': 'FedProx_mu0.1', 'num_clients': 10, 'distribution': 'iid', 'algo': 'fedprox', 'epochs': 3, 'rounds': 5, 'mu': 0.1},
+
+        # Tests avec outliers et données bruitées
+        {'name': 'Outliers_10pct', 'num_clients': 10, 'distribution': 'outliers', 'algo': 'fedavg', 'epochs': 3, 'rounds': 5, 'outlier_ratio': 0.1, 'noise_level': 0.2},
+        {'name': 'Outliers_20pct', 'num_clients': 10, 'distribution': 'outliers', 'algo': 'fedavg', 'epochs': 3, 'rounds': 5, 'outlier_ratio': 0.2, 'noise_level': 0.2},
+        {'name': 'Outliers_30pct', 'num_clients': 10, 'distribution': 'outliers', 'algo': 'fedavg', 'epochs': 3, 'rounds': 5, 'outlier_ratio': 0.3, 'noise_level': 0.2},
     ]
     
     # Résultats détaillés pour suivre la progression
@@ -104,6 +112,9 @@ def run_all_experiments():
     
     # Tableau pour stocker les résultats
     results = []
+
+    # Liste pour stocker les statistiques de communication
+    communication_stats = []
     
     # Référence: modèle entraîné de manière centralisée
     print("\n" + "="*50)
@@ -157,6 +168,13 @@ def run_all_experiments():
         dist_start = time.time()
         if config['distribution'] == 'iid':
             edges = data_partition.iid_partition(X_train, y_train, config['num_clients'])
+        elif config['distribution'] == 'outliers':
+            edges, noisy_clients = fairness_utils.create_noisy_client_distribution(
+                X_train, y_train, config['num_clients'], 
+                noisy_client_ratio=config['outlier_ratio'], 
+                noise_level=config['noise_level']
+            )
+            print(f"  Clients avec données bruitées: {', '.join(noisy_clients)}")
         else:
             edges = data_partition.non_iid_partition(X_train, y_train, config['num_clients'])
         dist_time = time.time() - dist_start
@@ -210,7 +228,7 @@ def run_all_experiments():
         federated_model = fl_model.MyModel(input_shape, nbclasses=10)
         
         # Nombre de rounds fédérés
-        num_rounds = 5
+        num_rounds = config['rounds'] if 'rounds' in config else 5
         round_history = {'round': [], 'loss': [], 'accuracy': []}
         
         # Exécuter l'apprentissage fédéré
@@ -238,6 +256,17 @@ def run_all_experiments():
             round_history['round'].append(round_num + 1)
             round_history['loss'].append(round_loss)
             round_history['accuracy'].append(round_acc)
+            
+            # Calculer les statistiques de communication
+            round_communication = {
+                'experiment': config['name'],
+                'round': round_num + 1,
+                'num_clients': config['num_clients'],
+                'num_parameters': communication_utils.count_parameters(federated_model.get_weights()),
+                'weights_size': communication_utils.calculate_weights_size(federated_model.get_weights()),
+                'total_data_transferred': communication_utils.calculate_weights_size(federated_model.get_weights()) * config['num_clients'] * 2  # ×2 pour montant et descendant
+            }
+            communication_stats.append(round_communication)
             
             print(f"  Loss: {round_loss:.4f}, Accuracy: {round_acc:.4f}, Time: {round_time:.2f}s")
                     
@@ -272,6 +301,20 @@ def run_all_experiments():
         # Libérer la mémoire entre les expériences
         gc.collect()
     
+    # Exécuter l'expérience spécifique pour analyser l'impact des outliers
+    print("\n" + "="*50)
+    print("EXPÉRIENCE: IMPACT DES OUTLIERS")
+    print("="*50)
+    outlier_results = outlier_analysis.run_outlier_experiments(
+        X_train, y_train, X_test, y_test, input_shape,
+        num_clients=10, epochs=3, rounds=5,
+        noise_levels=[0.1, 0.3, 0.5],
+        outlier_ratios=[0.1, 0.2, 0.3]
+    )
+    
+    # Visualiser les résultats des outliers
+    outlier_analysis.visualize_outlier_results(outlier_results)
+    
     # Temps total d'exécution
     total_time = time.time() - global_start_time
     hours, remainder = divmod(total_time, 3600)
@@ -291,6 +334,10 @@ def run_all_experiments():
     # Créer un dataframe pour les résultats détaillés
     detailed_df = pd.DataFrame(detailed_results)
     detailed_df.to_csv('federated_learning_detailed_results.csv', index=False)
+    
+    # Créer un dataframe pour les statistiques de communication
+    communication_df = pd.DataFrame(communication_stats)
+    communication_df.to_csv('communication_statistics.csv', index=False)
     
     # Créer le dossier pour les graphiques
     plots_dir = 'plots'
@@ -384,8 +431,6 @@ def run_all_experiments():
         plt.close()
         print(f"Graphique enregistré: {plots_dir}/algorithm_vs_accuracy.png")
     
-    print("\nTous les résultats et graphiques ont été enregistrés.")
-
     # 7. Analyse de la convergence en fonction du nombre de rounds
     rounds_data = detailed_df[detailed_df['experiment'].str.contains('Rounds_')]
     if not rounds_data.empty:
@@ -443,6 +488,107 @@ def run_all_experiments():
         plt.close()
         print(f"Graphique enregistré: {plots_dir}/local_epochs_effect.png")
     
+    # 10. Visualisation des statistiques de communication
+    plt.figure(figsize=(12, 8))
+    for exp_name in communication_df['experiment'].unique():
+        exp_data = communication_df[communication_df['experiment'] == exp_name]
+        plt.plot(exp_data['round'], exp_data['total_data_transferred'] / (1024*1024), marker='o', label=exp_name)
+    
+    plt.title('Volume de données échangées par round')
+    plt.xlabel('Round')
+    plt.ylabel('Volume de données (Mo)')
+    plt.legend()
+    plt.grid(linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.savefig(f'{plots_dir}/communication_volume.png')
+    plt.close()
+    print(f"Graphique enregistré: {plots_dir}/communication_volume.png")
+    
+    # 11. Ratio performance/communication
+    plt.figure(figsize=(12, 8))
+    for exp_name in communication_df['experiment'].unique():
+        exp_data = communication_df[communication_df['experiment'] == exp_name]
+        exp_results = detailed_df[detailed_df['experiment'] == exp_name]
+        
+        if not exp_results.empty and not exp_data.empty:
+            # Fusionner les DataFrames sur 'round'
+            merged_data = pd.merge(exp_data, exp_results, left_on='round', right_on='round')
+            
+            # Calculer le ratio performance/communication
+            total_data = merged_data['total_data_transferred'].cumsum() / (1024*1024)  # En Mo
+            accuracy_gain = merged_data['accuracy'] - merged_data['accuracy'].iloc[0]
+            
+            # Éviter la division par zéro
+            ratio = np.zeros_like(total_data)
+            mask = total_data > 0
+            ratio[mask] = accuracy_gain[mask] / total_data[mask]
+            
+            plt.plot(merged_data['round'], ratio, marker='o', label=exp_name)
+    
+    plt.title('Ratio performance/communication')
+    plt.xlabel('Round')
+    plt.ylabel('Gain de précision par Mo transféré')
+    plt.legend()
+    plt.grid(linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.savefig(f'{plots_dir}/performance_communication_ratio.png')
+    plt.close()
+    print(f"Graphique enregistré: {plots_dir}/performance_communication_ratio.png")
+    
+    # 12. Analyse de l'équité entre clients
+    for config in configurations[:3]:  # Limiter à quelques configurations pour gagner du temps
+        print(f"Analyse de l'équité pour {config['name']}...")
+        
+        if config['distribution'] == 'outliers':
+            edges, _ = fairness_utils.create_noisy_client_distribution(
+                X_train, y_train, config['num_clients'], 
+                noisy_client_ratio=config['outlier_ratio'], 
+                noise_level=config['noise_level']
+            )
+        elif config['distribution'] == 'iid':
+            edges = data_partition.iid_partition(X_train, y_train, config['num_clients'])
+        else:
+            edges = data_partition.non_iid_partition(X_train, y_train, config['num_clients'])
+        
+        # Créer un modèle central
+        model = fl_model.MyModel(input_shape, nbclasses=10)
+        
+        # Évaluer les performances de chaque client
+        client_metrics = fairness_utils.evaluate_client_models(
+            edges, input_shape, 10, model.get_weights(), test_dataset
+        )
+        
+        # Calculer la variance des performances
+        performance_stats = fairness_utils.calculate_performance_variance(client_metrics)
+        
+        # Visualiser la variance des performances
+        plt.figure(figsize=(10, 6))
+        accuracies = [metrics['accuracy'] for client, metrics in client_metrics.items()]
+        client_names = list(client_metrics.keys())
+        
+        # Créer un barplot
+        sns.barplot(x=client_names, y=accuracies)
+        plt.title(f'Équité des performances entre clients - {config["name"]}')
+        plt.xlabel('Client')
+        plt.ylabel('Précision')
+        plt.xticks(rotation=45)
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.tight_layout()
+        plt.savefig(f'{plots_dir}/client_fairness_{config["name"]}.png')
+        plt.close()
+        print(f"Graphique enregistré: {plots_dir}/client_fairness_{config['name']}.png")
+        
+        # Calculer et visualiser les matrices de confusion
+        if config['distribution'] != 'iid':
+            confusion_matrices = fairness_utils.compute_client_confusion_matrices(
+                edges, input_shape, 10, model.get_weights(), test_dataset
+            )
+            fairness_utils.plot_client_confusion_matrices(confusion_matrices, f'confusion_matrices_{config["name"]}')
+            print(f"Matrices de confusion enregistrées dans: confusion_matrices_{config['name']}/")
+        
+        # Libérer la mémoire
+        tf.keras.backend.clear_session()
+        
     from aggregation import generate_progression_visualizations
 
     # Générer les visualisations de progression
