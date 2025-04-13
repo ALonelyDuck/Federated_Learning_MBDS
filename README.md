@@ -72,7 +72,7 @@ Lorsque les données sont réparties entre $K$ clients, nous pouvons réécrire 
 
 $$f(w) = \sum_{k=1}^{K} \frac{n_k}{n} F_k(w)$$
 
-où $F_k(w) = \frac{1}{n_k} \sum_{i \in P_k} f_i(w)$ est la fonction objectif locale du client $k$, $P_k$ est l'ensemble des indices des points de données du client $k$, $n_k = |P_k|$ est le nombre de données du client $k$, et $n = \sum_{k=1}^{K} n_k$ est le nombre total de données.
+où $F_k(w) = \frac{1}{n_k} \sum_{i \in P_k} f_i(w)$ est la fonction objective locale du client $k$, $P_k$ est l'ensemble des indices des points de données du client $k$, $n_k = |P_k|$ est le nombre de données du client $k$, et $n = \sum_{k=1}^{K} n_k$ est le nombre total de données.
 
 <div class="page"/>
 
@@ -555,7 +555,7 @@ Avec une seule époque locale, la précision finale atteint 85,7%. Ce chiffre au
     <img src="./plots/local_epochs_effect.png" width="500" />
 </div>
 
-Toutefois, ce gain se fait au prix d'un temps de calcul plus élevé : 189s pour 1 époque, 249s pour 3 époques, et 295s pour 5 époques. Il existe également un risque qu'un trop grand nombre d'époques conduise à une sur-spécialisation des modèles sur leurs données locales.
+Toutefois, ce gain se fait au prix d'un temps de calcul plus élevé : 189s pour 1 époque, 249s pour 3 époques, et 295s pour 5 époques. Il existe également un risque qu'un trop grand nombre d'époques conduise à une surspécialisation des modèles sur leurs données locales.
 
 <div class="page"/>
 
