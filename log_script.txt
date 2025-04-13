@@ -1,0 +1,714 @@
+==================================================
+INFORMATIONS SYSTÈME
+==================================================
+CPU Cores: 8 (Physical), 16 (Logical)
+CPU Utilization: 0.0%
+RAM Total: 15.33 GB
+RAM Available: 14.32 GB (6.6% used)
+
+GPU Information:
+  /physical_device:GPU:0
+TensorFlow using GPU: Yes
+TensorFlow version: 2.19.0
+
+==================================================
+CHARGEMENT DES DONNÉES
+==================================================
+Chargement des données MNIST...
+[INFO] processed 10000/42000
+[INFO] processed 20000/42000
+[INFO] processed 30000/42000
+[INFO] processed 40000/42000
+Données chargées en 190.86 secondes
+I0000 00:00:1744394295.904630  638434 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 1753 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3050 Ti Laptop GPU, pci bus id: 0000:01:00.0, compute capability: 8.6
+
+Analyse des données MNIST:
+Nombre d'images d'entraînement: 37800
+Nombre d'images de test: 4200
+Dimensions des images: (28, 28)
+
+Distribution des classes dans l'ensemble d'entraînement:
+  Classe 0: 3717 images (9.83%)
+  Classe 1: 4191 images (11.09%)
+  Classe 2: 3733 images (9.88%)
+  Classe 3: 3894 images (10.30%)
+  Classe 4: 3654 images (9.67%)
+  Classe 5: 3416 images (9.04%)
+  Classe 6: 3775 images (9.99%)
+  Classe 7: 3973 images (10.51%)
+  Classe 8: 3676 images (9.72%)
+  Classe 9: 3771 images (9.98%)
+
+==================================================
+MODÈLE CENTRALISÉ (RÉFÉRENCE)
+==================================================
+Epoch 1/10
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1744394299.488442  638501 service.cc:152] XLA service 0x7f29740036b0 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+I0000 00:00:1744394299.488480  638501 service.cc:160]   StreamExecutor device (0): NVIDIA GeForce RTX 3050 Ti Laptop GPU, Compute Capability 8.6
+2025-04-11 19:58:19.527761: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:269] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+I0000 00:00:1744394299.596781  638501 cuda_dnn.cc:529] Loaded cuDNN version 90300
+2025-04-11 19:58:20.194534: I external/local_xla/xla/stream_executor/cuda/subprocess_compilation.cc:346] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_52', 12 bytes spill stores, 12 bytes spill loads
+
+2025-04-11 19:58:20.658724: I external/local_xla/xla/stream_executor/cuda/subprocess_compilation.cc:346] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_200', 16 bytes spill stores, 16 bytes spill loads
+
+2025-04-11 19:58:20.813403: I external/local_xla/xla/stream_executor/cuda/subprocess_compilation.cc:346] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_52', 4 bytes spill stores, 4 bytes spill loads
+
+2025-04-11 19:58:21.014026: I external/local_xla/xla/stream_executor/cuda/subprocess_compilation.cc:346] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_200', 8 bytes spill stores, 8 bytes spill loads
+
+I0000 00:00:1744394301.877946  638501 device_compiler.h:188] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+  Loss: 0.3971, Accuracy: 0.8888
+Epoch 2/10
+  Loss: 0.3193, Accuracy: 0.9079
+Epoch 3/10
+  Loss: 0.2874, Accuracy: 0.9193
+Epoch 4/10
+  Loss: 0.2532, Accuracy: 0.9262
+Epoch 5/10
+  Loss: 0.2300, Accuracy: 0.9329
+Epoch 6/10
+  Loss: 0.2089, Accuracy: 0.9410
+Epoch 7/10
+  Loss: 0.2015, Accuracy: 0.9412
+Epoch 8/10
+  Loss: 0.1839, Accuracy: 0.9445
+Epoch 9/10
+  Loss: 0.1771, Accuracy: 0.9467
+Epoch 10/10
+  Loss: 0.1632, Accuracy: 0.9536
+
+Modèle centralisé - Loss: 0.1632, Accuracy: 0.9536, Time: 32.59s
+
+==================================================
+EXPÉRIENCE: Rounds_3
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 2.83s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 0.8516, Accuracy: 0.8129, Time: 40.01s
+
+Round 2/5
+  Loss: 0.5064, Accuracy: 0.8698, Time: 38.42s
+
+Round 3/5
+  Loss: 0.4071, Accuracy: 0.8857, Time: 37.68s
+
+Round 4/5
+  Loss: 0.3592, Accuracy: 0.9005, Time: 38.80s
+
+Round 5/5
+  Loss: 0.3327, Accuracy: 0.9071, Time: 39.28s
+
+Rounds_3 - Loss: 0.3327, Accuracy: 0.9071, Time: 197.34s
+
+==================================================
+EXPÉRIENCE: Rounds_5
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 2.93s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 0.8629, Accuracy: 0.7995, Time: 39.11s
+
+Round 2/5
+  Loss: 0.5062, Accuracy: 0.8679, Time: 39.46s
+
+Round 3/5
+  Loss: 0.4087, Accuracy: 0.8845, Time: 40.03s
+
+Round 4/5
+  Loss: 0.3664, Accuracy: 0.8938, Time: 40.16s
+
+Round 5/5
+  Loss: 0.3390, Accuracy: 0.9048, Time: 39.65s
+
+Rounds_5 - Loss: 0.3390, Accuracy: 0.9048, Time: 201.78s
+
+==================================================
+EXPÉRIENCE: Rounds_10
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 2.78s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 0.8267, Accuracy: 0.8131, Time: 41.18s
+
+Round 2/5
+  Loss: 0.4980, Accuracy: 0.8657, Time: 40.58s
+
+Round 3/5
+  Loss: 0.4016, Accuracy: 0.8864, Time: 39.87s
+
+Round 4/5
+  Loss: 0.3580, Accuracy: 0.8986, Time: 40.78s
+
+Round 5/5
+  Loss: 0.3368, Accuracy: 0.9007, Time: 40.84s
+
+Rounds_10 - Loss: 0.3368, Accuracy: 0.9007, Time: 206.39s
+
+==================================================
+EXPÉRIENCE: Clients_5
+==================================================
+Configuration:
+  Nombre de clients: 5
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 2.85s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~7584 échantillons
+  Client edge_1: ~7584 échantillons
+  Client edge_2: ~7584 échantillons
+  ... et 2 autres clients
+
+Round 1/5
+  Loss: 0.4886, Accuracy: 0.8714, Time: 25.00s
+
+Round 2/5
+  Loss: 0.3679, Accuracy: 0.8945, Time: 23.95s
+
+Round 3/5
+  Loss: 0.3229, Accuracy: 0.9090, Time: 24.21s
+
+Round 4/5
+  Loss: 0.2966, Accuracy: 0.9160, Time: 24.88s
+
+Round 5/5
+  Loss: 0.2771, Accuracy: 0.9207, Time: 23.81s
+
+Clients_5 - Loss: 0.2771, Accuracy: 0.9207, Time: 125.06s
+
+==================================================
+EXPÉRIENCE: Clients_10
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 2.93s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 0.8222, Accuracy: 0.8226, Time: 41.51s
+
+Round 2/5
+  Loss: 0.5004, Accuracy: 0.8638, Time: 42.01s
+
+Round 3/5
+  Loss: 0.4068, Accuracy: 0.8812, Time: 42.23s
+
+Round 4/5
+  Loss: 0.3630, Accuracy: 0.8967, Time: 41.36s
+
+Round 5/5
+  Loss: 0.3359, Accuracy: 0.9029, Time: 43.00s
+
+Clients_10 - Loss: 0.3359, Accuracy: 0.9029, Time: 213.38s
+
+==================================================
+EXPÉRIENCE: Clients_20
+==================================================
+Configuration:
+  Nombre de clients: 20
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 2.49s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~1920 échantillons
+  Client edge_1: ~1920 échantillons
+  Client edge_2: ~1920 échantillons
+  ... et 17 autres clients
+
+Round 1/5
+  Loss: 1.3986, Accuracy: 0.7331, Time: 81.88s
+
+Round 2/5
+  Loss: 0.7937, Accuracy: 0.8155, Time: 80.92s
+
+Round 3/5
+  Loss: 0.5941, Accuracy: 0.8512, Time: 80.12s
+
+Round 4/5
+  Loss: 0.5042, Accuracy: 0.8664, Time: 80.15s
+
+Round 5/5
+  Loss: 0.4522, Accuracy: 0.8719, Time: 82.21s
+
+Clients_20 - Loss: 0.4522, Accuracy: 0.8719, Time: 408.19s
+
+==================================================
+EXPÉRIENCE: IID_10clients
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 2.54s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 0.8521, Accuracy: 0.8079, Time: 44.95s
+
+Round 2/5
+  Loss: 0.5111, Accuracy: 0.8648, Time: 45.69s
+
+Round 3/5
+  Loss: 0.4156, Accuracy: 0.8807, Time: 44.40s
+
+Round 4/5
+  Loss: 0.3698, Accuracy: 0.8936, Time: 45.59s
+
+Round 5/5
+  Loss: 0.3424, Accuracy: 0.8990, Time: 44.91s
+
+IID_10clients - Loss: 0.3424, Accuracy: 0.8990, Time: 228.51s
+
+==================================================
+EXPÉRIENCE: NonIID_10clients
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: non_iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 1.02s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~1536 échantillons
+2025-04-11 20:25:14.291696: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+    Distribution des classes: 0:756 3:415 4:341
+  Client edge_1: ~1536 échantillons
+2025-04-11 20:25:14.318995: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+    Distribution des classes: 4:756 9:756
+  Client edge_2: ~1536 échantillons
+    Distribution des classes: 1:756 6:756
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 2.1068, Accuracy: 0.1829, Time: 42.08s
+
+Round 2/5
+  Loss: 2.0210, Accuracy: 0.3364, Time: 41.60s
+
+Round 3/5
+  Loss: 1.9608, Accuracy: 0.4124, Time: 40.85s
+
+Round 4/5
+  Loss: 1.9207, Accuracy: 0.4524, Time: 42.94s
+
+Round 5/5
+  Loss: 1.8965, Accuracy: 0.4817, Time: 42.45s
+
+NonIID_10clients - Loss: 1.8965, Accuracy: 0.4817, Time: 211.39s
+
+==================================================
+EXPÉRIENCE: NonIID_extreme
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: non_iid_extreme
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 1.02s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~1536 échantillons
+  Client edge_1: ~1536 échantillons
+  Client edge_2: ~1536 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 2.1618, Accuracy: 0.2526, Time: 42.49s
+
+Round 2/5
+  Loss: 1.9104, Accuracy: 0.4817, Time: 43.20s
+
+Round 3/5
+  Loss: 1.7071, Accuracy: 0.5614, Time: 42.31s
+
+Round 4/5
+  Loss: 1.5577, Accuracy: 0.5976, Time: 43.59s
+
+Round 5/5
+  Loss: 1.4381, Accuracy: 0.6217, Time: 43.73s
+
+NonIID_extreme - Loss: 1.4381, Accuracy: 0.6217, Time: 216.76s
+
+==================================================
+EXPÉRIENCE: Epochs_1
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 1
+Distribution des données terminée en 2.46s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 1.7593, Accuracy: 0.5795, Time: 36.76s
+
+Round 2/5
+  Loss: 1.1537, Accuracy: 0.7650, Time: 37.31s
+
+Round 3/5
+  Loss: 0.8204, Accuracy: 0.8117, Time: 37.68s
+
+Round 4/5
+  Loss: 0.6574, Accuracy: 0.8402, Time: 37.40s
+
+Round 5/5
+  Loss: 0.5648, Accuracy: 0.8569, Time: 38.14s
+
+Epochs_1 - Loss: 0.5648, Accuracy: 0.8569, Time: 189.09s
+
+==================================================
+EXPÉRIENCE: Epochs_3
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 2.47s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 0.7555, Accuracy: 0.8257, Time: 50.16s
+
+Round 2/5
+  Loss: 0.4866, Accuracy: 0.8645, Time: 48.41s
+
+Round 3/5
+  Loss: 0.4015, Accuracy: 0.8869, Time: 50.08s
+
+Round 4/5
+  Loss: 0.3602, Accuracy: 0.8983, Time: 48.91s
+
+Round 5/5
+  Loss: 0.3327, Accuracy: 0.9071, Time: 48.56s
+
+Epochs_3 - Loss: 0.3327, Accuracy: 0.9071, Time: 248.93s
+
+==================================================
+EXPÉRIENCE: Epochs_5
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 5
+Distribution des données terminée en 2.47s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 0.5137, Accuracy: 0.8657, Time: 58.34s
+
+Round 2/5
+  Loss: 0.3804, Accuracy: 0.8933, Time: 58.89s
+
+Round 3/5
+  Loss: 0.3362, Accuracy: 0.9055, Time: 57.93s
+
+Round 4/5
+  Loss: 0.3065, Accuracy: 0.9171, Time: 58.80s
+
+Round 5/5
+  Loss: 0.2851, Accuracy: 0.9224, Time: 58.58s
+
+Epochs_5 - Loss: 0.2851, Accuracy: 0.9224, Time: 295.45s
+
+==================================================
+EXPÉRIENCE: FedAvg_10
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedavg
+  Époques locales: 3
+Distribution des données terminée en 2.47s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+  Loss: 0.8896, Accuracy: 0.8055, Time: 50.69s
+
+Round 2/5
+  Loss: 0.5232, Accuracy: 0.8624, Time: 50.71s
+
+Round 3/5
+  Loss: 0.4190, Accuracy: 0.8845, Time: 50.36s
+
+Round 4/5
+  Loss: 0.3689, Accuracy: 0.8950, Time: 50.27s
+
+Round 5/5
+  Loss: 0.3378, Accuracy: 0.9024, Time: 51.35s
+
+FedAvg_10 - Loss: 0.3378, Accuracy: 0.9024, Time: 256.18s
+
+==================================================
+EXPÉRIENCE: FedSGD_LR0.01
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedsgd
+  Époques locales: 3
+Distribution des données terminée en 2.47s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3523, Accuracy: 0.1071, Time: 51.36s
+
+Round 2/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3531, Accuracy: 0.1071, Time: 50.50s
+
+Round 3/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3540, Accuracy: 0.1071, Time: 51.78s
+
+Round 4/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3547, Accuracy: 0.1069, Time: 51.54s
+
+Round 5/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3555, Accuracy: 0.1067, Time: 52.74s
+
+FedSGD_LR0.01 - Loss: 2.3555, Accuracy: 0.1067, Time: 260.77s
+
+==================================================
+EXPÉRIENCE: FedSGD_LR0.1
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedsgd
+  Époques locales: 3
+Distribution des données terminée en 2.64s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3600, Accuracy: 0.1105, Time: 53.30s
+
+Round 2/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3608, Accuracy: 0.1098, Time: 53.71s
+
+Round 3/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3615, Accuracy: 0.1090, Time: 54.32s
+
+Round 4/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3623, Accuracy: 0.1083, Time: 52.22s
+
+Round 5/5
+Visualisation avec flèches de gradient enregistrée dans gradient_plots/
+  Loss: 2.3631, Accuracy: 0.1081, Time: 53.53s
+
+FedSGD_LR0.1 - Loss: 2.3631, Accuracy: 0.1081, Time: 270.09s
+
+==================================================
+EXPÉRIENCE: FedProx_mu0.01
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedprox
+  Époques locales: 3
+Distribution des données terminée en 2.56s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.8785, Accuracy: 0.8093, Time: 56.44s
+
+Round 2/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.5001, Accuracy: 0.8698, Time: 53.33s
+
+Round 3/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.4052, Accuracy: 0.8883, Time: 53.78s
+
+Round 4/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.3634, Accuracy: 0.8971, Time: 53.95s
+
+Round 5/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.3347, Accuracy: 0.9062, Time: 54.85s
+
+FedProx_mu0.01 - Loss: 0.3347, Accuracy: 0.9062, Time: 275.28s
+
+==================================================
+EXPÉRIENCE: FedProx_mu0.1
+==================================================
+Configuration:
+  Nombre de clients: 10
+  Distribution des données: iid
+  Algorithme: fedprox
+  Époques locales: 3
+Distribution des données terminée en 2.52s
+
+Analyse de la distribution des données par client:
+  Client edge_0: ~3808 échantillons
+  Client edge_1: ~3808 échantillons
+  Client edge_2: ~3808 échantillons
+  ... et 7 autres clients
+
+Round 1/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.8822, Accuracy: 0.8036, Time: 54.86s
+
+Round 2/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.5070, Accuracy: 0.8648, Time: 54.47s
+
+Round 3/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.4121, Accuracy: 0.8843, Time: 54.72s
+
+Round 4/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.3681, Accuracy: 0.8936, Time: 55.34s
+
+Round 5/5
+Visualisations des paramètres fedprox enregistrées dans parameter_plots/
+  Loss: 0.3389, Accuracy: 0.9026, Time: 56.32s
+
+FedProx_mu0.1 - Loss: 0.3389, Accuracy: 0.9026, Time: 278.63s
+
+Temps total d'exécution: 1h 12m 5.27s
+
+==================================================
+RÉSULTATS DE TOUTES LES EXPÉRIENCES
+==================================================
+                name      loss  accuracy        time
+0        Centralized  0.163249  0.953571   32.589201
+1           Rounds_3  0.332675  0.907143  197.342162
+2           Rounds_5  0.339002  0.904762  201.776163
+3          Rounds_10  0.336774  0.900714  206.386966
+4          Clients_5  0.277056  0.920714  125.057334
+5         Clients_10  0.335928  0.902857  213.376751
+6         Clients_20  0.452153  0.871905  408.191166
+7      IID_10clients  0.342430  0.899048  228.509876
+8   NonIID_10clients  1.896533  0.481667  211.393064
+9     NonIID_extreme  1.438127  0.621667  216.761509
+10          Epochs_1  0.564802  0.856905  189.085681
+11          Epochs_3  0.332736  0.907143  248.933273
+12          Epochs_5  0.285109  0.922381  295.449683
+13         FedAvg_10  0.337763  0.902381  256.182356
+14     FedSGD_LR0.01  2.355504  0.106667  260.773493
+15      FedSGD_LR0.1  2.363076  0.108095  270.088480
+16    FedProx_mu0.01  0.334662  0.906190  275.278293
+17     FedProx_mu0.1  0.338862  0.902619  278.628176
+
+==================================================
+GÉNÉRATION DES GRAPHIQUES
+==================================================
+Graphique enregistré: plots/global_accuracy.png
+Graphique enregistré: plots/execution_time.png
+Graphique enregistré: plots/accuracy_progression.png
+Graphique enregistré: plots/clients_vs_time.png
+Graphique enregistré: plots/epochs_vs_accuracy.png
+Graphique enregistré: plots/algorithm_vs_accuracy.png
+
+Tous les résultats et graphiques ont été enregistrés.
+Graphique enregistré: plots/convergence_by_rounds.png
+Graphique enregistré: plots/iid_vs_noniid_impact.png
+Graphique enregistré: plots/local_epochs_effect.png
+
+==================================================
+GÉNÉRATION DES VISUALISATIONS DE PROGRESSION
+==================================================
+Visualisation de progression enregistrée dans progression_plots/
+Visualisation de progression enregistrée dans progression_plots/
+Visualisation de progression enregistrée dans progression_plots/
+Visualisation de progression enregistrée dans progression_plots/
